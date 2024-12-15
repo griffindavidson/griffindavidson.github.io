@@ -1,0 +1,44 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 3rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+a {
+    all: unset;
+}
+
+.feed {
+    margin: 0;
+    width: 50%;
+    min-width: 375px;
+    max-width: 800px;
+}
+
+.article {
+    background-color: var(--post-background);
+    padding: 10px;
+    border-radius: 15px;
+    margin: 5px 0;
+}
+
+.title {
+    font-weight: bold;
+    color: var(--primary-font);
+}
+
+.summary {
+    color: var(--primary-font);
+}
+
+.publish-date {
+    text-align: end;
+    color: var(--secondary-font);
+}

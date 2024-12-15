@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>A Definitive Guide to External Displays on macOS</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="A detailed analysis of how macOS addresses external displays">
+        <meta property="og:type" content="article">
+        <meta name="author" content="Griffin Davidson">
+        <meta property="og:description" content="A detailed analysis of how macOS addresses external displays">
+        <meta property="og:url" content="https://www.griffindavidson.com/blog/mac-displays.html">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../globals.css">
+        <link rel="stylesheet" type="text/css" href="mac-displays.css">
+        <script src=mac-displays.js defer></script>
+    </head>
+    <body>
+        <h1>A Definitive Guide to External Displays on macOS</h1>
+        <div class="author-section">
+            <span class="author">Written by: Griffin Davidson<img src="../images/portrait.jpeg" alt="" id="portrait"/></span>
+            <span>Published: <time datetime="2024-11-10">November 10th, 2024</time></span>
+        </div>
+        <article lang="en">
+            <p style="color: var(--secondary-font);">
+                Disclaimer: I cannot determine the "white box" behavior of how macOS addresses external displays,
+                I — nor anyone who discusses this topic — don't have access to the source code of macOS nor do I work for Apple. This article is a culmination
+                of the resources I've used and the findings of my own (small) black-box experimentation.
+            </p>
+
+            <h2> Introduction</h2>
+
+            <p>
+                macOS, unlike Windows, handles external displays rather oddly — and in my opinion inferior.
+                I've taken an interest in macOS's rather unique way of addressing external displays when I first
+                got into computers. First, let's understand why you're here: you likely found an interesting
+                graph from <a href="https://bjango.com/articles/macexternaldisplays/" target="_blank">Bjango</a> or you saw
+                <a href="https://youtu.be/5HZO-tfsQ-A?si=Z_DNgfWAAhAvxg3q" target="_blank">Kyle Erickson's video</a> or
+                <a href="https://youtu.be/kpX561_XM20?si=du0dY6KlvO_Jmil2" target="_blank">Hunter King's video</a> and
+                <a href="https://youtu.be/KV7TV_OeHzU?si=DmCs5OY-t7ksa9m1" target="_blank">follow up</a> or even
+                <a href="https://youtu.be/jaWpq-dNVro?si=MqeDMTTqnE6prbBw" target="_blank">MacMostVideo's analysis</a>
+                (I'll address these later in the article) and have questions regarding your new or
+                potentially new display for your Mac. Or like me you're just a nerd that loves tech and likes learning
+                about how Software (doesn't) work.... or maybe I or another Redditor shared the link here because
+                I've had to explain this so many times on reddit that I've created this blog post.
+            </p>
+
+            <h2>The Easy Answer</h2>
+
+            <p>
+                The simple answer is this: <span class="bold">macOS uses resolution to determine UI scaling</span>.
+                This <span class="bold">does not mean</span> that macOS pushes out 1080p on a 4K monitor. Instead, in
+                a convoluted manner, resolution and scaling are interlaced; they define eachother. However, the default "looks like
+                1920x1080" scaling option on a 4K display is outputting 4K. Apple just doesn't make it obvious.
+            </p>
+
+            <img
+                src="../images/display_settings.jpeg"
+                alt="A screenshot of macOS System Settings Displays pane showing scaling options"
+                class="screenshot"
+            />
+
+            <p class="subscript">A screenshot of macOS System Settings Displays pane showing scaling options</p>
+
+            <p>
+                By default, every high-resolution external display triggers what is called "HiDPI scaling" or more widely known
+                as "Retina 2x Scaling". It may appear that your display is rendering at 1/4 of the physical resolution (1080p for 4K,
+                2K for 5K) but it's not; instead, assuming you're using cables that support the full resolution of your monitor,
+                your Mac is indeed pushing out a 4K, 5K, or whatever-K image. If you want to check the physical resolution recognized
+                by macOS, go to System Settings > General > About > Displays. This is the sole location in macOS that shows you your physical display resolution.
+            </p>
+
+            <!-- Lord this is a lot of typing, if you found this, nice easter egg catch -->
+
+            <img
+                src="../images/about_settings.jpeg"
+                alt="A screenshot of macOS System Settings About pane showing all connected displays physical resolution"
+                class="screenshot"
+            />
+
+            <p class="subscript">A screenshot of macOS System Settings About pane showing all connected displays physical resolution</p>
+
+            <p>
+                If you're not too concerned about any potential issues with high-resolution displays, select the scaling option in
+                the Displays Panel (first screenshot) that is the most comfortable sizing for you. I'll continue discussing the workings later on.
+                So, for the average person who doesn't care too much about potential performance penalties or
+                slightly blurrier fine details (font and single-pixel lines) that's it.
+            </p>
+
+            <p>
+                But chances are you want the best display experience. You're here afterall? Surely you have concerns about
+                why I stated earlier how macOS's implementation of external displays is inferior? Surely you want the best possible
+                external display experience for your Mac; if so, continue reading on, I'll address the sources I mentioned before and
+                explain what I think is going on under the hood in macOS with external displays.
+            </p>
+
+            <h2>A Detailed Look into Scaling</h2>
+
+            <p>
+                This part of the conversation forks into two aspects: 1) how macOS renders the desktop using scaling for external
+                displays and 2) macOS is best designed for 110/220 PPI displays. I'll start with the former first, and finish with the latter.
+            </p>
+
+            <h3>How macOS Renders the Desktop</h3>
+
+            <p>
+                With low-resolution displays (for 16:9 displays: 2560x1440 or lower), scaling is directly related to resolution. Want a bigger UI?
+                Select a lower resolution; smaller UI? Higher resolution. The smallest you can pick without 3rd party utilities is the physical
+                resolution of your monitor.
+            </p>
+
+            <p>
+                The initial problem with scaling is eventually the more pixels you add, the smaller each UI element becomes because each UI element is
+                the same width in pixels (the common unit of measurement for GUI elements) but each pixel is physically smaller. Below is an example of
+                my LG Ultrafine 5K set to 1x and 2x resolution.
+            </p>
+
+            <div class="image-view">
+                <div class="single-image-view">
+                    <img
+                        src="../images/desktop_2x.jpeg"
+                        alt="A screenshot of a 5K desktop scaled to 2560x1440"
+                        class="screenshot"
+                    />
+                    <p class="subscript">2x Scaling: 5120x2880 w/ "looks like 2560x1440"; Output: 5120x2880</p>
+                </div>
+                <div class="single-image-view">
+                    <img
+                        src="../images/desktop_1x.jpeg"
+                        alt="A screenshot of a 5K desktop scaled to 5120x2880"
+                        class="screenshot"
+                    />
+                    <p class="subscript">1x Scaling: 5120x2880; Output: 5120x2880</p>
+                </div>
+                <div class="single-image-view">
+                    <img
+                        src="../images/desktop_lowres.jpeg"
+                        alt="A screenshot of a 1440p desktop"
+                        class="screenshot"
+                    />
+                    <p class="subscript">1x Scaling: 2560x1440; Output: 2560x1440</p>
+                </div>
+            </div>
+
+            <p>
+                The results are obvious: as you cram more pixels into a display without a scaling solution, UI elements become
+                smaller and smaller. Without any scaling, each UI element is 1/4 the size it is by default with scaling.
+            </p>
+
+            <p>
+                The solution Apple uses is called Dots. <span class="bold">Dots are essentially abstract versions of pixels</span>.
+                What does that mean? They are a relative and non-physical measurement that are comprised of pixels. We can make a dot worth
+                1 pixel, 4 pixels, or 9 pixels. This solution was first designed for iPhone with iPhone 4. Apple had launched the very first
+                Retina device.
+            </p>
+
+            <p>
+                Take the images below for example as a zoomed-in view of pixels. If we associate dots correctly, then the 1x version associates each
+                pixel to each dot, 1:1. The 2x version has 4x has many pixels, 2x each direction. So, if we set each dot to fill a total of 4 pixels, then
+                the "resolution" is the same. Both devices use the same quantity of dots, so the UI scales to the same size for both devices, but details and
+                smaller elements are sharper since each dot is able to distinct more details
+            </p>
+
+            <div class="image-view">
+                <div class="single-image-view">
+                    <img
+                        src="../images/dots_1x.jpeg"
+                        alt="provided by Kyle Erickson"
+                        class="screenshot"
+                    />
+                    <p class="subscript">1x Pixels/Dots (Source: Kyle Erickson)</p>
+                </div>
+                <div class="single-image-view">
+                    <img
+                        src="../images/dots_2x.jpeg"
+                        alt="provided by Kyle Erickson"
+                        class="screenshot"
+                    />
+                    <p class="subscript">4x Pixels to same number of dots (Source: Kyle Erickson)</p>
+                </div>
+                <div class="single-image-view">
+                    <img
+                        src="../images/result.jpeg"
+                        alt="provided by Kyle Erickson"
+                        class="screenshot"
+                    />
+                    <p class="subscript">Result of Dots (Source: Kyle Erickson)</p>
+                </div>
+            </div>
+
+            <h3>What about non-Integer scaling options?</h3>
+
+            <p>
+                So far I've discussed scaling using integer options, but that doesn't answer the majority of macOS's
+                scaling capabilities. This is where some imagination comes in, quite literally. For the sake of this article,
+                I can't exactly show "looks like 2560x1440" from a 4K display because I have a 5K display, 1440p is the default
+                option for me, so for this example please bear with me as I use "looks like 2880x1620"
+            </p>
+
+            <div class="image-view">
+                <div class="single-image-view">
+                    <img
+                        src="../images/erickson_incorrect.jpeg"
+                        alt="non-integer scaling applied incorrectly"
+                        class="screenshot"
+                    >
+                    <p class="subscript">Incorrect example of macOS non-integer scaling (Source: Kyle Erickson)</p>
+                </div>
+                <div class="single-image-view">
+                    <img
+                        src="../images/erickson_correct.jpeg"
+                        alt="non-integer scaling applied correctly"
+                        class="screenshot"
+                    >
+                    <p class="subscript">Correct example of macOS non-integer scaling (Source: Kyle Erickson)</p>
+                </div>
+            </div>
+
+            <div class="single-image-view">
+                <img
+                    src="../images/scaled_settings.jpeg"
+                    alt="Applied a scaled resolution to my display"
+                    class="screenshot"
+                >
+                <p class="subscript">Applied a scaled resolution to my display</p>
+            </div>
+
+            <div class="single-image-view">
+                <img
+                    src="../images/system_info.jpeg"
+                    alt="System Information reporting a virtual resolution"
+                    class="screenshot"
+                >
+                <p class="subscript">System Information reporting a virtual resolution 5760x3240 on a 5120x2880 display</p>
+            </div>
+
+            <p>
+                When you select a scaling resolution that is not an integer multiple of your display's physical resolution, macOS in the
+                background creates a virtual monitor that renders the correct resolution of your desired scale. In Erickson's case: 5120x2880.
+                In my case: 5760x3240. Even screenshots will result in the virtual resolution created.
+            </p>
+
+            <p>
+                So, problem solved right? Yes and No. Yes, it's now possible to resize the GUI of macOS on various display
+                sizes and resolutions (so long they trigger macOS's HiDPI threshhold for 2x scaling)... No, Apple's implementation
+                includes some drawbacks, assumptions, and potentially performance penalties. Looking back up to the System Settings
+                Displays pane showing the warning *Using a scaled resolution <span class="bold">may affect</span> performance*. This
+                does not guarantee a performance penalty, but just like why people ask why their Mac is displaying in 1920x1080 on their
+                4K monitor, this warning asks more questions than it answers.
+            </p>
+
+            <h3>Potential Drawbacks</h3>
+
+            <p style="text-align: start">
+                I've identified three drawbacks with varying degrees of severity:
+            </p>
+
+            <ul>
+                <li>Blurrier fine details and font due to misaligned virtual pixels and physical pixels</li>
+                <li>Increased VRAM (RAM for Apple Silicon Macs) usage due to (likely) larger frame buffer</li>
+                <li>Reports of GPU performance penalties with widely varying degrees of severity</li>
+            </ul>
+
+            <p>
+                Starting with the first: Blurrier fine details. This issue is difficult to show on this article due to the
+                nature of its purpose. Since macOS is imagining your display is some other resolution and creating that desktop
+                to send to your monitor, the virtual pixels do not perfectly align with the physical pixels on your monitor. MacOS
+                attempts to remedy this with a basic amount of anti-aliasing, but even the best AA algorithms have a clarity penalty.
+                The result is slightly blurrier fine details than typical. Note this <span class="bold">will not affect rasterized
+                media such as pictures and video</span>. These types of media define each and every pixel a particular color, so these
+                items are not affected with macOS's scaling. What is affected again are parts of the operating system: font, the menu bar,
+                dock, window borders, and more. As shown from Kyle Erickson's video, font is likely to appear less defined and sharp compared
+                to default scaling. Another example is single-pixel wide lines could "shimmer" since it's impossible for a 4K display to show
+                a pixel-wide line when pixels don't match up in the first place.
+            </p>
+
+            <div class="image-view">
+                <div class="single-image-view">
+                    <img
+                        src="../images/font_example.jpeg"
+                        alt="clarity example when using scaled resolutions"
+                        class="screenshot"
+                    >
+                    <p class="subscript">Font clarity example (Source: Kyle Erickson)</p>
+                </div>
+                <div class="single-image-view">
+                    <img
+                        src="../images/shimmer.gif"
+                        alt="Bjango's font shimmer example"
+                        class="screenshot"
+                    >
+                    <p class="subscript">Font shimmer example (Source: Bjango)</p>
+                </div>
+            </div>
+
+            <p>
+                Secondly, and this might seem logical, generating a larger resolution in the GPU naturally requires extra
+                VRAM or RAM depending on the Mac model. This should be a relatively small penalty and usage shouldn't be too
+                noticeable for the average person. That being said, this could prove concerning for Macs with limited amount of
+                memory available, such as the 8GB base model Apple Silicon Macs or the Intel Macs that used integreated GPUs with
+                also very little available memory. During basic tasks such as (reasonable) web browsing and emailing, there shouldn't
+                be any noticeable performance penalty for this reason. But if you're already running out of memory
+                due to a demanding process, an extra few MBs of used memory could result in a small but observable performance disparity.
+                I believe this will only affect a small number of users, particularly users that didn't know how much memory they
+                may have needed.
+            </p>
+
+            <p>
+                Finally, the most widely varying report: other GPU penalties. I used a LG Ultrafine 4K 24" for a year. That display is a 3820x2160
+                24" display that just barely misses macOS's prefered pixel density threshold (I will get to this in a moment). For a comfortable
+                UI size for the average person, that particular display best scaled to around 4.6K, I unfortunately don't have it anymore so I can't
+                provide any further information about it. But during that year of use, I did not notice any major performance discrepancies. My workload
+                is primarily betweeen software development with Xcode or Web Dev and Gaming, it may be different for Video Producers, but at least with
+                my experience, I didn't notice any performance penalies using a scaled resolution for an extended amount of time.
+            </p>
+
+            <p>
+                In Kyle Erickson's video about the topic, he also concluded <a href="https://www.youtube.com/watch?v=5HZO-tfsQ-A?t=6m14s" target="_blank">
+                there was no major performance discrepancies on Apple Silicon Macs(6m14s)</a>. Where things take a different turn is Hunter King's
+                video series. In his videos, he returned a 4K monitor because of a <a href="https://www.youtube.com/watch?v=kpX561_XM20?t=7m" target="_blank">
+                major export time discrepancy between using the large default 1080p scaling on a 4K 27" display compared to the scaled 1440p UI (7m)</a>.
+                These contradicting findings lead me to believe that for the average person, scaling should not affect performance; but, as King notes earlier
+                in his video, if a user has a Mac with a severely limited amount of memory compared to the work they do, every Megabyte of RAM can mean real
+                and observable changes in performance. Since <a href="https://youtu.be/apEKAY11NQs?si=WWW3NSt1BPtWPXhD" target="_blank">RAM is not feasibly
+                upgradable on Apple Silicon Macs</a>, you need to configure your Mac with the amount of RAM and SSD storage you'll need in 5 years rather than
+                what you need today for the best longevity.
+            </p>
+
+            <h2>macOS is best-designed for ~220 PPI Displays</h2>
+
+            <p>
+                Finally onto the second part of the discussion. Earlier I said macOS is best-designed for ~220 pixel-per-inch displays, why? Why did I pay an obscene
+                amount of money for a 218-pixels-per-inch display? In short, because Apple. I don't have evidence of <i>exactly why</i>
+                apple chose to optimize their scaling for 220 PPI. Windows doesn't care, there's no performance penalty on Windows.. sure some
+                apps may not respect the incremental scaling.. so why is this such a problem on macOS? Apple's short-lived former CEO John Sculley
+                said "Apple was built on the premise that there is a better way to do things, but they got into this mindset of being ‘the alternative,’ and
+                it became too much about Apple versus Microsoft, Apple versus the world. It wasn't about building bridges or working with others. It was
+                about being the sole player in the game." — <cite>PBS Frontline, 2001</cite>.
+            </p>
+
+            <p>
+                For macOS, I can trace back to the 27" Cinema Display from 2010: a 27" 2560x1440 display. The 30" Cinema HD display from 2004
+                was also 2560x1600, but it falls short of the 110 PPI target despite being the world's 'highest-resolution display' at the time.
+                Following the 27" Cinema display in 2010 we got the Thunderbolt Display, then the 27" iMacs were at first 1440p until the Retina 5K iMac
+                in 2014 and then the LG Ultrafine 5K in 2016, followed by Pro Display XDR being a 32" 6K display in 2019 and the Studio Display
+                released in 2022. Point being Apple has been targeting this resolution for over a decade now. They just arbitrarily decided macOS will prefer
+                110 and now 220 PPI.
+            </p>
+
+            <p>
+                So wait, Apple <i>originally targeted</i> 110 PPI, why is that no longer recommended? <a href="https://daringfireball.net/linked/2018/07/17/mojave-antialiasing"
+                target="_blank">With the release of macOS 10.14 Mojave, Apple removed subpixel anti-aliasing</a>. As I mentioned before, AA is used to try to fix the issues
+                with pixels not aligning in 2x HiDPI scaling modes, and now subpixel AA — used for 1x non-HiDPI scaling — is completely gone in macOS. The result is a pixelated
+                and blocky interface. Bigger elements are fine, but once again font and fine details are squashed and horribly blocky. Apple likely removed subpixel AA in macOS mojave
+                since none of their shiney new Macs needed it. The final two Macs to continue using it was the older-style 2015/2017 MacBook Air with the crappy TN panel which was replaced
+                in 2018 with the 2016 MacBook design language before the 2022 redesign and the ludicrously outdated and untouched 1080p 21.5" iMac that was removed in March 2019.
+            </p>
+
+            <div class="single-image-view">
+                <img
+                    src="../images/desktop_lowres.jpeg"
+                    alt="110 PPI example from earlier, hard to tell but it doesn't look good"
+                    class="screenshot"
+                >
+                <p class="subscript">110 PPI 2560x1440 27" example from earlier, hard to tell in a small size but it doesn't look good</p>
+            </div>
+
+            <p>
+                So what happens without subpixel anti-aliasing? The two screenshots below show. The screenshot taken
+                from my monitor set to 2560x1440 2x is tack-sharp even on such a zoomed-in scale. But when I set my display
+                manually to 2560x1440 1x, this is how macOS treats font. The result is a blocky, pixelated look due to the way
+                macOS prioritizes keeping font accuracy over font clarity, a key design spearheaded by Steve Jobs. The reason
+                why Windows is able to display font so well on low-resolution displays is because Windows prioritizes clarity over
+                accuracy, and slightly alters the font to ensure a sharp divide of pixels. MacOS anti-aliases font, but still dropped
+                subpixel anti-aliasing.
+            </p>
+
+            <div class="image-view">
+                <div class="single-image-view">
+                    <img
+                        src="../images/menubar2x-native.heic"
+                         alt="Menu Bar 2x native 560x30"
+                         class="screenshot"
+                    >
+                    <p class="subscript">Menu bar 2x native 560x60 (280x30 dots)</p>
+                </div>
+                <div class="single-image-view">
+                    <img
+                        src="../images/menubar1x.heic"
+                        alt="Menu Bar 1x native 280x30"
+                        class="screenshot"
+                    >
+                    <p class="subscript">Menu bar 1x native 280x30 (280x30 dots)</p>
+                </div>
+            </div>
+
+            <p>
+                When you use a 4K 27" display, despite not perfectly aligning to macOS's preference of 220 PPI,
+                you still give macOS more pixels to work with to add detail and create a smoother font. Scaling a
+                4K 27" display to "looks like 2560x1440" does have a clarity penalty, but its significantly less
+                than the standard output of 1x scaling for a 27" 1440p display.
+            </p>
+
+            <h2>Source Analysis</h2>
+
+            <h3>What about Bjango's graph?</h3>
+
+            <p>
+                <a href="https://bjango.com/articles/macexternaldisplays/" target="_blank">Bjango's graph</a> is still relevant for those seeking exlusively a good default UI scaling.
+                Assuming you, the reader, are the average person and prefer the default UI scaling found on Apple's iMacs, Studio Display, and Pro Display XDR, then yes this graph does
+                still have relevance. There's even starting to finally be a larger market of 27" 5K displays, including Samsung and Dell (albeit at prices closer to Apple's still).
+            </p>
+
+            <p>
+                Furthermore, I can't find any hard evidence on this yet either, so take a big grain of salt, but I've also heard the way ARM addresses external displays
+                is worse than x86 Intel. It's fine for high-resolution displays, but from what I've heard (but not been able to test mind you) Apple Silicon Macs address low-resolution
+                displays even worse than Intel counterparts. If I find hard evidence, I will edit and report back here.
+            </p>
+
+            <div class="single-image-view">
+                <img
+                    src="../images/display-list.png"
+                    alt="Bjango's graph"
+                    class="screenshot"
+                >
+                <p class="subscript">Bjango's Display List (Source: Bjango)</p>
+            </div>
+
+            <h3>Kyle Erickson</h3>
+
+            <p>
+                It should come as no surprise that I endorse Kyle Erickson's video on the matter. I have extensively used clips and resources from his video to help explain these
+                concepts on this post, I agree with everything he says in his video.
+            </p>
+
+            <h3>Hunter King</h3>
+
+            <p>
+                Hunter King's video series do raise valid concerns with extreme usage cases and scaling. Again, I strongly believe the average web-browser, emailer, and word-processer
+                will not have any performance discrepancies if using an external monitor at a scaled non-integer resolution. However, if you do have a base-model Mac with a limiting amount of
+                RAM or other specs, I believe King raises valid concerns. One interesting experiment for his situation would be to test if using a 5K monitor (such as Studio Display or my LG Ultrafine 5K)
+                would cause the same performance issues observed when using a 4K display scaled to 5K.
+            </p>
+
+            <h3>Gary's MacMost</h3>
+
+            <p>
+                Gary's MacMostVideo channel is a great source for basic Mac tips. While I support his argument of using a 4K display over 1440p displays. I find his argument supporting his reasoning
+                wrong. The problem is that Gary's video does not account for the Dot scaling system used with 4K displays that I described earlier. His argument claims there's more usable space available
+                on a 4K display compared to 1440p; which with default scaling is simply not true. To recap, 4K triggers macOS's HiDPI scaling, so for the 4K image, it will "look like 1920x1080" as dots, and each dot will
+                4 pixels, resulting in a 3840x2160 output. So the useable space between the monitors is 2560x1440 for the 1440p display and 1920x1080 for the 4K one. In this case, there's more space in the 1440p
+                monitor. However, since the 4K display is HiDPI, this unlocks more scaling options, so on this 4K display we can scale to "looks like 2560x1440" for the same useable space in the 1440p display, or
+                go even higher. We could even go all the way to full 1:1 scaling with "looks like 3840x2160", thus making Gary's argument true and nearly doubling the space available from 1440p (with a tiny GUI although).
+            </p>
+
+            <h2>Conclusion</h2>
+
+            <p>
+                So what should you consider for your external display if you're shopping for one? Or should you sell your current display? <span class="bold">I recommend for everyone to stick with 4K or higher resolution displays</span>.
+                Using displays that trigger macOS's HiDPI scaling mode is crucial for a sharp and enjoyable experience for macOS on external Displays. Ultrawide presents a problem since most Ultrawides are comparatively low-resolution with
+                respect to pixel density. I am unaware of any ultrawides that are close to 220 PPI as of writing this blog. If you believe the drawbacks of scaling to 1440p/5K on a 4K external display is too high of a price regardless
+                (now you know why I have my LG Ultrafine 5K) then you're forced to pick between the tiny handful of displays available that meet your needs, which include:
+            </p>
+
+            <ul>
+                <li>Apple Studio Display</li>
+                <li>Apple Pro Display XDR</li>
+                <li>Asus ProArt 5K PA27JCV</li>
+                <li>Asus ProArt 6K PA32QCV (Coming Soon)</li>
+                <li>BenQ PD2730S (Coming Soon)</li>
+                <li>Dell Ultrasharp UP2715K (Discontinued)</li>
+                <li>Dell Ultrasharp U3224KB</li>
+                <li>LG Ultrafine 4K 21.5" (Discontinued for the 24" model)</li>
+                <li>LG Ultrafine 5K</li>
+                <li>Samsung ViewFinity S9 5K</li>
+            </ul>
+
+            <p>
+                Ultimately, macOS's HiDPI scaling works best for displays with pixel densities around 220 PPI listed abopve, but if you're using
+                a non-HiDPI display or have a lower-end Mac, you may experience trade-offs in performance or clarity.
+            </p>
+
+            <h2>References</h2>
+
+            <div class="references">
+                <div class="reference">
+                    <img
+                        src="../images/kyleerickson.jpg"
+                        alt="Kyle Erickson"
+                        class="reference-photo"
+                    >
+                    <div class = "reference-list">
+                        <span class="bold">Kyle Erickson</span>
+                        <span><a href="https://youtu.be/5HZO-tfsQ-A?si=m21i_KvIbtj7v1yg" target="_blank">macOS 4K Scaling Explained: The TRUTH About Quality And Performance!</a></span>
+                    </div>
+                </div>
+                <div class="reference">
+                    <img
+                        src="../images/hunterking.jpg"
+                        alt="Hunter King"
+                        class="reference-photo"
+                    >
+                    <div class="reference-list">
+                        <span class="bold">Hunter King</span>
+                        <span><a href="https://www.youtube.com/watch?v=kpX561_XM20" target="_blank">Why I RETURNED my 4k Monitor // MacOS Scaling Explained!</a></span>
+                        <span><a href="https://www.youtube.com/watch?v=KV7TV_OeHzU" target="_blank">Why I RETURNED my 4K Monitor Pt. 2! // Answering Your Questions!</a> </span>
+                    </div>
+                </div>
+                <div class="reference">
+                    <img
+                        src="../images/macmost.jpg"
+                        alt="MacMostVideo"
+                        class="reference-photo"
+                    >
+                    <div class="reference-list">
+                        <span class="bold">MacMostVideo</span>
+                        <span><a href="https://www.youtube.com/watch?v=jaWpq-dNVro" target="_blank">The Problem With Using 1440 Screens With a Mac</a></span>
+                    </div>
+                </div>
+                <div class="reference">
+                    <img
+                        src="../images/lukemiani.jpg"
+                        alt="Luke Miani (and DosDude1)"
+                        class="reference-photo"
+                    >
+                    <div class="reference-list">
+                        <span class="bold">Luke Miani (and DosDude1)</span>
+                        <span><a href="https://www.youtube.com/watch?v=apEKAY11NQs" target="_blank">UPGRADING an M1 Mac mini SSD from 256gb to 2TB!!</a></span>
+                    </div>
+                </div>
+                <div class="reference">
+                    <img
+                        src="../images/dfstar.svg"
+                        alt="John Gruber"
+                        class="reference-photo"
+                    >
+                    <div class="reference-list">
+                        <span class="bold">John Gruber (via Daring Fireball)</span>
+                        <span><a href="https://daringfireball.net/linked/2018/07/17/mojave-antialiasing" target="_blank">macOS 10.14 Mojave removes subpixel anti-aliasing</a></span>
+                    </div>
+                </div>
+                <div class="reference">
+                    <img
+                        src="../images/bjango.jpeg"
+                        alt="Bjango"
+                        class="reference-photo"
+                    >
+                    <div class="reference-list">
+                        <span class="bold">Bjango</span>
+                        <span><a href="https://bjango.com/articles/macexternaldisplays/" target="_blank">Mac external displays for designers and developers</a></span>
+                    </div>
+                </div>
+                <div class="reference">
+                    <img
+                        src="../images/pbs.png"
+                        alt="PBS Frontline"
+                        class="reference-photo"
+                    >
+                    <div class="reference-list">
+                        <span class="bold">PBS Frontline</span>
+                        <span>Documentary: <i>The Rise and Fall of Apple</i>, 2001 (link no longer available)</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </body>
+</html>
