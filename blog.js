@@ -51,7 +51,7 @@ function updateThemeColor() {
       metaThemeColor.setAttribute('content', '#121212');  // Dark mode theme color (black)
     } else {
       // Set theme color for light mode
-      metaThemeColor.setAttribute('content', '#eee');  // Light mode theme color (white)
+      metaThemeColor.setAttribute('content', '#eeeeee');  // Light mode theme color (white)
     }
   }
 
