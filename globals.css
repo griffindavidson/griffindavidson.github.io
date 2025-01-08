@@ -30,3 +30,85 @@ body {
 h1, h2, h3, p, span, li {
     color: var(--primary-font);
 }
+
+.navbar {
+    display: flex; 
+    justify-content: space-evenly; 
+    align-items: center;
+    width: min(90%, 500px) !important;
+    height: max-content;
+    position: fixed;
+    padding: 1rem; 
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 1000;
+    font-size: large;
+    color: white;
+  }
+  
+  .navbar::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-radius: 100px;
+    background: #222;
+    box-shadow: 5px 5px 25px rgba(12, 12, 12, 0.1);
+  }
+  
+  .item {
+    display: none;
+  }
+  
+  .item:checked + label {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+  }
+
+  .item:checked + label[for="home"] {
+    color:aqua;
+  }
+
+  .item:checked + label[for="projects"] {
+    color:yellow;
+  }
+
+  .item:checked + label[for="blog"] {
+    color:greenyellow;
+  }
+  
+  label {
+    margin: 5px;
+    cursor: pointer;
+  }
+  
+  @keyframes scaleExpand {
+    0% {
+      transform: translateY(200%) scale(0.1);
+    }
+      
+    80% {
+      transform: translateY(0);
+    }
+      
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes scaleCollapse {
+    0% {
+      transform: scale(1);
+    }
+    
+    20% {
+      transform: translateY(0);
+    }
+    
+    100% {
+      transform: translateY(200%) scale(0.1);
+    }
+  }

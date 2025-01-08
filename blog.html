@@ -12,17 +12,6 @@
         <h1>Blog</h1>
         <div class="feed">
             <post-element
-                article="reflection-addendum"
-                title="Reflection Paper #3 Identities Addendum"
-                body=
-                    "
-                    An addendum to my writing on identity politics, and 
-                    thoughts on the worldview of those supporting its true
-                    and inherently discriminatory preachings
-                    "
-                publish-date="December 16th, 2024"
-            ></post-element>
-            <post-element
                 article="mac-displays"
                 title="A Definitive Guide to External Displays on macOS"
                 body=
@@ -33,6 +22,14 @@
                     "
                 publish-date="November 10th, 2024"
             ></post-element>
+        </div>
+        <div class="navbar">
+            <input type="radio" name="nav" value="home" class="item" id="home" onclick="goHome()"/>
+            <label for="home">Home</label>
+            <input type="radio" name="nav" value="projects" class="item" id="projects" onclick="gotoProjects()"/>
+            <label for="projects">Projects</label>
+            <input type="radio" name="nav" value="blog" class="item" id="blog" onclick="gotoBlog()" checked/>
+            <label for="blog">Blog</label>
         </div>
     </body>
 </html>
