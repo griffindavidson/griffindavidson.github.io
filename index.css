@@ -18,9 +18,13 @@ h1 {
     font-size: 3rem;
 }
 
+h3 {
+    color: white;
+}
+
 p {
     color: #ddd;
-    font-size: 1.25rem;
+    font-size: 1rem;
 }
 
 .bio {
