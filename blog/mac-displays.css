@@ -112,7 +112,6 @@ a {
     width: 88px;
     object-fit: cover;
     display: block;
-    vertical-align: middle;
 }
 
 .reference-list {
@@ -120,10 +119,6 @@ a {
     flex-direction: column;
     text-align: start;
     margin-left: 5px;
-}
-
-.back {
-    
 }
 
 @media only screen and (max-width: 400px) {

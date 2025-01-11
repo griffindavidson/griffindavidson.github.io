@@ -18,26 +18,3 @@ class PostElement extends HTMLElement {
 }
 
 customElements.define('post-element', PostElement);
-
-function goHome() {
-    window.location = "./index.html";
-    document.getElementById('home').checked = true;
-}
-
-function gotoProjects() {
-    window.location = "./index.html#projects-section";
-    document.getElementById('projects').checked = true;
-}
-
-window.addEventListener('popstate', () => {
-    const currentPath = window.location.pathname;
-    
-    // Check if the URL path is '/blog/'
-    if (currentPath === '/blog/') {
-        document.getElementById('blog').checked = true;
-    } else if (window.location.hash.trim() === '#projects-section') {
-        document.getElementById('projects').checked = true;
-    } else {
-        document.getElementById('home').checked = true;
-    }
-});

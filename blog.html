@@ -18,8 +18,15 @@
         <script type="text/javascript" src="blog.js" defer></script>
     </head>
     <body>
+        <nav class="navbar">
+            <ul role="list">
+                <li><a href="./index.html">Home</a></li>
+                <li><a href="./index.html#projects-section">Projects</a></li>
+                <li><a href="./blog.html">Blog</a></li>
+            </ul>
+        </nav>
         <h1>Blog</h1>
-        <div class="feed">
+        <main class="feed">
             <post-element
                 article="mac-displays"
                 title="A Definitive Guide to External Displays on macOS"
@@ -31,14 +38,6 @@
                     "
                 publish-date="November 10th, 2024"
             ></post-element>
-        </div>
-        <div class="navbar">
-            <input type="radio" name="nav" value="home" class="item" id="home" onclick="goHome()"/>
-            <label for="home">Home</label>
-            <input type="radio" name="nav" value="projects" class="item" id="projects" onclick="gotoProjects()"/>
-            <label for="projects">Projects</label>
-            <input type="radio" name="nav" value="blog" class="item" id="blog" onclick="gotoBlog()" checked/>
-            <label for="blog">Blog</label>
-        </div>
+        </main>
     </body>
 </html>

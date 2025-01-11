@@ -72,10 +72,6 @@ function handleScroll() {
     lastScrollY = currentScrollY;
 }
 
-function gotoBlog() {
-    window.location = "./blog.html";
-}
-
 // Trigger initial star generation and redraw on resize
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
@@ -88,42 +84,6 @@ window.addEventListener('scroll', handleScroll);
 
 generateStars('comet');
 generateStars('move');
-
-window.addEventListener('popstate', () => {
-    const currentPath = window.location.pathname;
-    
-    // Check if the URL path is '/blog/'
-    if (currentPath === '/blog/') {
-        document.getElementById('blog').checked = true;
-    } else if (window.location.hash.trim() === '#projects-section') {
-        document.getElementById('projects').checked = true;
-    } else {
-        document.getElementById('home').checked = true;
-    }
-});
-
-function gotoProjects() {
-    window.location.hash = '#projects-section';
-    document.getElementById('projects').checked = true;
-}
-
-function goHome() {
-    window.location.hash = '#background';
-    document.getElementById('home').checked = true;
-}
-
-window.addEventListener('hashchange', () => {
-    const hash = window.location.hash.trim(); // Ensure no extra whitespace
-    if (hash === '#projects-section') {
-        document.getElementById('projects').checked = true;
-    } else if (hash === '#background') {
-        document.getElementById('home').checked = true;
-    } else {
-        console.warn('Unknown hash:', hash);
-        // Optional: Set a default radio button if the hash doesn't match
-        document.getElementById('home').checked = true;
-    }
-});
 
 function cmpe165() {
     window.open("https://github.com/GreenXDShadow/CMPE165HotelProject", '_blank'); // '_blank' ensures it opens in a new tab

@@ -18,15 +18,14 @@
         <script src="index.js" type="text/javascript" defer></script>
     </head>
     <body>
-        <div class="navbar">
-            <input type="radio" name="nav" value="home" class="item" id="home" checked onclick="goHome()"/>
-            <label for="home">Home</label>
-            <input type="radio" name="nav" value="projects" class="item" id="projects" onclick="gotoProjects()"/>
-            <label for="projects">Projects</label>
-            <input type="radio" name="nav" value="blog" class="item" id="blog" onclick="gotoBlog()"/>
-            <label for="blog">Blog</label>
-        </div>
-        <div class="background" id="background">
+        <nav class="navbar">
+            <ul role="list">
+                <li><a href="./index.html">Home</a></li>
+                <li><a href="./index.html#projects-section">Projects</a></li>
+                <li><a href="./blog.html">Blog</a></li>
+            </ul>
+        </nav>
+        <main class="background" id="background">
             <div class="overlay">
                 <div class="content">
                     <div class="text">
@@ -38,7 +37,7 @@
                     <img src="/images/portrait.jpeg" alt="profile photo"/>
                 </div>
             </div>
-        </div>
+        </main>
         <div class="new-section" id="projects-section">
             <div class="title-container">
                 <h2>Projects</h2>
