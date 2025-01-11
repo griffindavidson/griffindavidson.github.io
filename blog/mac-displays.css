@@ -143,5 +143,9 @@ a {
     .screenshot {
         box-shadow: 5px 5px 25px rgba(0, 0, 0, 1);
     }
+    
+    svg path {
+        fill: white !important;
+        stroke: white;
+    }
 }
-
