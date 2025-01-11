@@ -61,7 +61,8 @@ h1, h2, h3, p, span, li {
     left: 0;
     z-index: -1;
     border-radius: 100px;
-    background: #222;
+    background: rgba(34, 34, 34, 0.5);
+    backdrop-filter: blur(15px);
     box-shadow: 5px 5px 25px rgba(12, 12, 12, 0.1);
   }
   
