@@ -139,3 +139,9 @@ a {
     }
 }
 
+@media(prefers-color-scheme: dark) {
+    .screenshot {
+        box-shadow: 5px 5px 25px rgba(0, 0, 0, 1);
+    }
+}
+
