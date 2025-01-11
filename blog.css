@@ -64,7 +64,7 @@ a {
             
 @media(prefers-color-scheme: light) {
     .navbar::after {
-        background-color: #fafafa;
+        background-color: rgba(250, 250, 250, 0.5);
     }
 
     .navbar li a {
