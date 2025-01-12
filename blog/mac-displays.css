@@ -110,8 +110,14 @@ a {
 .reference-photo {
     border-radius: 50%;
     width: 88px;
+    height: 88px;
     object-fit: cover;
     display: block;
+}
+
+svg.reference-photo {
+    min-width: 88px !important;
+    min-height: 88px !important;
 }
 
 .reference-list {
