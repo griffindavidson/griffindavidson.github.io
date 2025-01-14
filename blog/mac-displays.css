@@ -127,15 +127,19 @@ svg.reference-photo {
     margin-left: 5px;
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 550px) {
     .screenshot {
-        width: 350px;
+        width: 90%;
     }
 
     .reference-photo {
         width: 88px;
         height: 88px;
         object-fit: cover;
+    }
+
+    .reference {
+        width: 95%;
     }
 }
 
