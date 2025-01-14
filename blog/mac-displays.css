@@ -129,7 +129,7 @@ svg.reference-photo {
 
 @media only screen and (max-width: 550px) {
     .screenshot {
-        width: 90%;
+        width: calc(100vw - 30px);
     }
 
     .reference-photo {
@@ -139,7 +139,7 @@ svg.reference-photo {
     }
 
     .reference {
-        width: 95%;
+        width: calc(100vw - 30px);
     }
 }
 
