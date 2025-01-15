@@ -84,16 +84,3 @@ window.addEventListener('scroll', handleScroll);
 
 generateStars('comet');
 generateStars('move');
-
-function cmpe165() {
-    window.open("https://github.com/GreenXDShadow/CMPE165HotelProject", '_blank'); // '_blank' ensures it opens in a new tab
-}
-
-function cmpe172() {
-    window.open("https://github.com/griffindavidson/172project", '_blank'); // '_blank' ensures it opens in a new tab
-}
-
-function cmpe195() {
-    window.open("https://github.com/griffindavidson/cmpe195a-project", '_blank'); // '_blank' ensures it opens in a new tab
-}
-

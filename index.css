@@ -134,6 +134,14 @@ img {
     z-index: 0;
 }
 
+.projects-container a {
+    text-decoration: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .project {
     width: 80%;
     background-color: #121212;
