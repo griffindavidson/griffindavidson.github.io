@@ -124,16 +124,12 @@ img {
     z-index: 10;
 }
 
-.projects-container {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
 .projects-grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(278px, 1fr));
+    grid-template-columns: repeat(auto-fit, 300px);
+    grid-auto-rows: 1fr;
     justify-content: center;
-    margin: 0 1rem;
+    margin: 0 2rem;
     gap: 1rem;
 }
 
@@ -142,7 +138,9 @@ img {
 }
 
 .project {
-    height: 250px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr;
     background-color: #121212;
     margin: 0;
     padding: 1rem;
@@ -151,18 +149,17 @@ img {
     border: 1px solid white;
 }
 
-.project > h3 {
-    margin-bottom: 10px;
-}
-
 .project:hover {
     cursor: pointer;
-    box-shadow: 0 0 50px 10px #fff;
-    border: 1px solid #121212;
+    box-shadow: 0 0 100px 0 #fff;
 }
 
 .project:not(:hover) {
     z-index: 3;
+}
+
+.project > h3 {
+    margin-bottom: 0.5rem;
 }
 
 footer {
