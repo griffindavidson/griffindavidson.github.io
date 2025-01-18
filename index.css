@@ -151,7 +151,7 @@ img {
 
 .project:hover {
     cursor: pointer;
-    box-shadow: 0 0 100px 0 #fff;
+    box-shadow: 0 0 25px 0 #fff;
 }
 
 .project:not(:hover) {
