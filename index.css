@@ -178,10 +178,6 @@ footer > p {
 }
 
 @media only screen and (max-width: 400px) {
-    .background {
-        height: 100svh;
-    }
-
     .content {
         margin: 25px auto;
         flex-direction: column;
