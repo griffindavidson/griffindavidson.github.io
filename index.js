@@ -2,7 +2,7 @@
 let resizeTimeout;
 const windowHeight = window.innerHeight;
 const windowWidth = window.innerWidth;
-const totalStars = Math.floor((windowHeight * windowWidth)/32000);
+const totalStars = Math.floor(Math.log((windowHeight * windowWidth)/32000) * 4);
 
 /* for navbar */
 let lastScrollY = window.scrollY;
